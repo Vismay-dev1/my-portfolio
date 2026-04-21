@@ -10,7 +10,7 @@ This is my personal portfolio website built using HTML and CSS.
 
 ## Live Demo
 
-https://vismay-dev1.github.io/my-portfolio/)
+https://vismay-dev1.github.io/my-portfolio/
 
 ## Technologies Used
 - HTML
