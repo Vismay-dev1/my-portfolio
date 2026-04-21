@@ -842,6 +842,7 @@ footer {
 
 <footer>
   <p>© 2026 Vismay. Built with ❤️ and code.</p>
+  <p style="margin-top: 10px; color: #8892b0; font-size: 0.85rem;">👥 Visitors: <span id="visitor-count" style="color: #00ff88; font-weight: bold;">0</span></p>
 </footer>
 
 <script>
@@ -928,6 +929,59 @@ document.addEventListener('click', (e) => {
   if (!e.target.closest('nav')) {
     hamburger.classList.remove('active');
     navLinks.classList.remove('active');
+  }
+});
+
+// ========== UNIQUE VISITOR COUNTER ==========
+function getDeviceId() {
+  let id = localStorage.getItem('deviceId');
+  if (!id) {
+    id = 'device_' + Date.now() + '_' + 
+         Math.random().toString(36).substr(2, 9) +
+         '_' + navigator.userAgent.split(' ').pop();
+    localStorage.setItem('deviceId', id);
+  }
+  return id;
+}
+
+function trackVisitor() {
+  const deviceId = getDeviceId();
+  let visitors = JSON.parse(
+    localStorage.getItem('uniqueVisitors') || '[]'
+  );
+
+  if (!visitors.includes(deviceId)) {
+    visitors.push(deviceId);
+    localStorage.setItem('uniqueVisitors', JSON.stringify(visitors));
+  }
+
+  // Update the counter display
+  const counterElement = document.getElementById('visitor-count');
+  if (counterElement) {
+    counterElement.textContent = visitors.length;
+  }
+}
+
+// Admin: Reset visitor counter (Ctrl+Shift+R)
+document.addEventListener('keydown', function(e) {
+  if (e.ctrlKey && e.shiftKey && e.key === 'R') {
+    if (confirm('⚠️ Reset all visitor data? This cannot be undone.')) {
+      localStorage.removeItem('uniqueVisitors');
+      localStorage.removeItem('deviceId');
+      location.reload();
+    }
+  }
+});
+
+// Track visitor on page load
+document.addEventListener('DOMContentLoaded', function() {
+  trackVisitor();
+});
+
+// Track when user returns to tab
+document.addEventListener('visibilitychange', function() {
+  if (!document.hidden) {
+    trackVisitor();
   }
 });
 </script>
