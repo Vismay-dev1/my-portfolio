@@ -100,23 +100,43 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // 5. Global Visitor Counter (Real-time)
+    // 5. Improved Visitor Counter with Multiple Fallbacks
     const counterElement = document.getElementById('counter-value');
     if (counterElement) {
-        // We use a free API to track global visits across all users
-        // This will increment every time the page is loaded
+        // Function to update counter display
+        function updateCounterDisplay(count) {
+            counterElement.innerText = count.toLocaleString();
+        }
+
+        // Function to get visitor count from localStorage
+        function getLocalVisitorCount() {
+            let count = localStorage.getItem('visitorCount') || '100';
+            return parseInt(count);
+        }
+
+        // Function to increment and save visitor count
+        function incrementVisitorCount() {
+            let count = getLocalVisitorCount();
+            count++;
+            localStorage.setItem('visitorCount', count.toString());
+            return count;
+        }
+
+        // Primary: Try using CountAPI
         fetch('https://api.countapi.xyz/hit/vismay-portfolio-unique/visits')
             .then(res => res.json())
             .then(data => {
-                counterElement.innerText = data.value.toLocaleString();
+                if (data && data.value) {
+                    updateCounterDisplay(data.value);
+                } else {
+                    throw new Error('Invalid CountAPI response');
+                }
             })
             .catch(err => {
-                // Fallback to local count if API fails
-                let count = localStorage.getItem('visitorCount') || 100;
-                count = parseInt(count) + 1;
-                localStorage.setItem('visitorCount', count);
-                counterElement.innerText = count;
-                console.error('Counter API error:', err);
+                console.warn('CountAPI failed, using localStorage fallback:', err);
+                // Fallback: Use localStorage and increment
+                const count = incrementVisitorCount();
+                updateCounterDisplay(count);
             });
     }
 
@@ -171,4 +191,3 @@ document.addEventListener('DOMContentLoaded', () => {
     
     typeElements.forEach(el => typeObserver.observe(el));
 });
-
