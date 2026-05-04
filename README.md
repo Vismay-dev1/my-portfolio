@@ -15,6 +15,7 @@ https://vismay-dev1.github.io/my-portfolio/
 ## Technologies Used
 - HTML
 - CSS
+- JavaScript
 
 ## Author
 Vismay
