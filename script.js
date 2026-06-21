@@ -105,7 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (counterElement) {
         // Function to update counter display
         function updateCounterDisplay(count) {
-            counterElement.innerText = count.toLocaleString();
+            counterElement.textContent = count.toLocaleString();
         }
 
         // Function to get visitor count from localStorage
@@ -122,18 +122,22 @@ document.addEventListener('DOMContentLoaded', () => {
             return count;
         }
 
-        // Primary: Try using CountAPI
-        fetch('https://api.countapi.xyz/hit/vismay-portfolio-unique/visits')
+        // Primary: Try using CounterAPI
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+        fetch('https://api.counterapi.dev/v1/vismay-portfolio/visits/up', { signal: controller.signal })
             .then(res => res.json())
             .then(data => {
-                if (data && data.value) {
-                    updateCounterDisplay(data.value);
+                clearTimeout(timeoutId);
+                if (data && data.count) {
+                    updateCounterDisplay(data.count);
                 } else {
-                    throw new Error('Invalid CountAPI response');
+                    throw new Error('Invalid CounterAPI response');
                 }
             })
             .catch(err => {
-                console.warn('CountAPI failed, using localStorage fallback:', err);
+                console.warn('CounterAPI failed, using localStorage fallback:', err);
                 // Fallback: Use localStorage and increment
                 const count = incrementVisitorCount();
                 updateCounterDisplay(count);
