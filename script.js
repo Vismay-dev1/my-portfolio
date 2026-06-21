@@ -175,11 +175,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 el.classList.add('typed');
                 
                 let i = 0;
-                el.innerHTML = '';
+                el.textContent = '';
                 
                 const typeInterval = setInterval(() => {
                     if (i < text.length) {
-                        el.innerHTML += text.charAt(i);
+                        el.textContent += text.charAt(i);
                         i++;
                     } else {
                         clearInterval(typeInterval);
